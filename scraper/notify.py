@@ -4,7 +4,8 @@ Credentials come from env vars (which the workflow wires up from GitHub Secrets)
 
     GMAIL_USER           - your Gmail address
     GMAIL_APP_PASSWORD   - a 16-char App Password (requires 2FA on the account)
-    NOTIFY_TO            - optional; defaults to GMAIL_USER
+    NOTIFY_TO            - optional; comma-separated list of recipient
+                           addresses. Defaults to GMAIL_USER.
 """
 
 from __future__ import annotations
@@ -47,16 +48,19 @@ def send_digest(new_jobs: list[dict]) -> None:
     except KeyError as missing:
         log.error("missing required env var: %s; skipping email", missing)
         return
-    to = os.environ.get("NOTIFY_TO") or user
+    raw_to = os.environ.get("NOTIFY_TO") or user
+    recipients = [addr.strip() for addr in raw_to.split(",") if addr.strip()]
+    if not recipients:
+        recipients = [user]
 
     msg = EmailMessage()
     msg["Subject"] = f"[job-search] {len(new_jobs)} new posting(s)"
     msg["From"] = user
-    msg["To"] = to
+    msg["To"] = ", ".join(recipients)
     msg.set_content(_format_body(new_jobs))
 
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
         server.login(user, password)
-        server.send_message(msg)
-    log.info("sent digest with %d jobs to %s", len(new_jobs), to)
+        server.send_message(msg, to_addrs=recipients)
+    log.info("sent digest with %d jobs to %s", len(new_jobs), recipients)
