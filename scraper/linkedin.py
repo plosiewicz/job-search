@@ -49,6 +49,8 @@ LOCATION_CODES = {
     "United States": "103644278",
     "San Francisco Bay Area": "90000084",
     "San Francisco": "102277331",
+    "San Diego Metropolitan Area": "90000049",
+    "San Diego": "102117310",
     "Remote": None,  # handled via f_WT=2 work-type filter, not geoId
 }
 

@@ -16,7 +16,7 @@ TITLES = [
     "Forward Deployed Engineer",
 ]
 
-LOCATIONS = ["San Francisco Bay Area", "Remote"]
+LOCATIONS = ["San Francisco Bay Area", "San Diego Metropolitan Area", "Remote"]
 
 BOARDS = [
     ("linkedin", linkedin.search),

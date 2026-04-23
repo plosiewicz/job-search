@@ -8,7 +8,8 @@ postings matching target titles, and emails a digest via Gmail SMTP.
 - **Titles** (each queried separately against each board):
   Data Scientist, Machine Learning Engineer, Solutions Architect,
   Sales Engineer, Forward Deployed Engineer
-- **Locations**: San Francisco Bay Area *and* US-Remote (two passes)
+- **Locations**: San Francisco Bay Area, San Diego Metropolitan Area,
+  and US-Remote (three passes)
 - **Recency**: postings from the last 24 hours
 - **Seniority filter**: excludes titles containing `senior`, `sr`, `staff`,
   `principal`, `lead`, `manager`, `director`, `head of`, `vp`, `chief`,
