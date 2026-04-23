@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import sys
 
 from . import indeed, linkedin, notify, state
@@ -21,6 +22,37 @@ BOARDS = [
     ("linkedin", linkedin.search),
     ("indeed", indeed.search),
 ]
+
+# Title substrings that indicate a role is too senior for a master's student.
+# Matched case-insensitively with word boundaries so "Senior" doesn't clobber
+# plain "Engineer" and "Lead" doesn't match "Leadership" etc.
+EXCLUDED_SENIORITY_TERMS = [
+    r"senior",
+    r"sr\.?",
+    r"staff",
+    r"principal",
+    r"lead",
+    r"manager",
+    r"director",
+    r"head of",
+    r"vp",
+    r"vice president",
+    r"chief",
+    r"distinguished",
+    r"fellow",
+    # Roman-numeral levels III+ (II is often mid-level and sometimes fine).
+    r"iii",
+    r"iv",
+]
+
+_EXCLUSION_RE = re.compile(
+    r"\b(?:" + "|".join(EXCLUDED_SENIORITY_TERMS) + r")\b",
+    flags=re.IGNORECASE,
+)
+
+
+def is_too_senior(title: str) -> bool:
+    return bool(_EXCLUSION_RE.search(title or ""))
 
 
 def configure_logging() -> None:
@@ -61,6 +93,13 @@ def main() -> int:
     seen = state.prune(state.load_state())
     found = collect()
     logging.info("collected %d unique postings across boards", len(found))
+
+    before_seniority = len(found)
+    found = [j for j in found if not is_too_senior(j.get("title", ""))]
+    logging.info(
+        "filtered out %d postings by seniority; %d remain",
+        before_seniority - len(found), len(found),
+    )
 
     new_jobs = filter_new(found, seen)
     logging.info("%d of those are new since last run", len(new_jobs))

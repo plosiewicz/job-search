@@ -10,9 +10,14 @@ postings matching target titles, and emails a digest via Gmail SMTP.
   Sales Engineer, Forward Deployed Engineer
 - **Locations**: San Francisco Bay Area *and* US-Remote (two passes)
 - **Recency**: postings from the last 24 hours
+- **Seniority filter**: excludes titles containing `senior`, `sr`, `staff`,
+  `principal`, `lead`, `manager`, `director`, `head of`, `vp`, `chief`,
+  `distinguished`, `fellow`, or roman-numeral levels `III`/`IV` — roles
+  that typically require years of experience.
 
-Edit `TITLES` and `LOCATIONS` at the top of
-[`scraper/main.py`](scraper/main.py) to change what's searched.
+Edit `TITLES`, `LOCATIONS`, and `EXCLUDED_SENIORITY_TERMS` at the top of
+[`scraper/main.py`](scraper/main.py) to change what's searched and what's
+filtered.
 
 ## How it works
 
